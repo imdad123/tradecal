@@ -52,7 +52,14 @@ export default function Home() {
     e.preventDefault(); if(!supabase) return;
     setAuthBusy(true); setAuthMessage("");
     const result=authMode==="signup"
-      ? await supabase.auth.signUp({email,password})
+      ? await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            // Email confirmation must return to the deployed app, not localhost.
+            emailRedirectTo: "https://tradecal-vert.vercel.app",
+          },
+        })
       : await supabase.auth.signInWithPassword({email,password});
     if(result.error) setAuthMessage(result.error.message);
     else if(authMode==="signup" && !result.data.session) setAuthMessage("Account created. Check your email to confirm, then sign in.");
